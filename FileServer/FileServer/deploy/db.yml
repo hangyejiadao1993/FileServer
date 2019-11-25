@@ -1,0 +1,47 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-db-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myapp-db
+  minReadySeconds: 5
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: myapp-db
+    spec:
+      containers:
+        - name: myapp-database
+          image: mcr.microsoft.com/mssql/server
+          ports:
+           - containerPort: 1433
+          env:
+            - name: "ACCEPT_EULA"
+              value: "Y"
+            - name: "SA_PASSWORD"
+              value: "Hangye1993"
+            - name: "MSSQL_PID"
+              value: "Express"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-db-service
+spec:
+  selector:
+    app: myapp-db
+  ports:
+    - protocol: TCP
+      port: 1433
+      targetPort: 1433
+  type: ClusterIP
+  
+  
+---

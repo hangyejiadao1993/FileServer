@@ -1,0 +1,30 @@
+node{
+	def version = "v2"
+	stage('checkout'){
+	  checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'ssh', url: 'git@192.168.111.132:/home/git/repos/fileserver']]])
+	}
+	stage('build'){
+		sh '''
+			cd ./FileServer/FileServer
+		 	docker build -t  hangyejiadao/fileserver:v11 . 
+			docker push hangyejiadao/fileserver:v11  		
+	      '''
+	} 
+	stage('deploy'){
+     try{
+	 
+		sh '''
+
+		cd ./FileServer/FileServer/deploy
+		kubectl delete -f   app.yml 
+		 '''
+	  }finally{
+	   sh '''
+		cd ./FileServer/FileServer/deploy
+		kubectl apply -f   app.yml 
+		 '''
+	  
+	  }
+	
+	}
+}

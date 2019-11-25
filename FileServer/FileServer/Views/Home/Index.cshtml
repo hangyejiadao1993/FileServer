@@ -1,0 +1,46 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@model IList<FileServer.DomainEntity.FileData>
+<div class="text-center">
+    <h1 class="display-4">文件上传</h1>
+    <form method="post" enctype="multipart/form-data"     action="@Url.Action("UploadFile","Home")">
+        <input type="file" name="file" />
+        <input type="submit"  value="上传"/>
+    </form>
+ 
+    <h1 class="text-body">文件展示</h1>
+    <form>
+        <table class="table table-active" >
+            <tr>
+                <td>Id</td>
+                <td>服务器IP</td>
+                <td>文件名</td>
+                <td>文件路径</td>
+                <td>创建时间</td>
+                <td>操作</td>
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.IP</td>
+                    <td>@item.FileName</td>
+                    <td>@item.FilePath</td>
+                    <td>@item.CreateTime</td>
+                    <td><input type="button"  value="下载"  onclick="DownloadFile('@(item.Id )')"/></td>
+                </tr>
+            }
+        </table>
+
+    </form>
+ 
+</div>
+
+<script type="text/javascript">
+    function DownloadFile(Id) { 
+        var url = ('/Home/Download?Id=' + Id)
+        //window.location.href = url; 
+        window.open(url, "_blank");
+    }
+</script>
